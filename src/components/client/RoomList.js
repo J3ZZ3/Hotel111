@@ -12,8 +12,12 @@ const RoomList = ({ rooms }) => {
           {rooms.map((room, index) => (
             <li key={index}>
               <h3>{room.name}</h3>
+              <img src={room.imageUrl} alt={room.name} className="room-image" width={500} />
               <p>{room.description}</p>
-              <p>Price: ${room.price}</p>
+              <p>Room Type: {room.roomType}</p>
+              <p>Amenities: {room.amenities}</p>
+              <p>Capacity: {room.capacity}</p>
+              <p>Price: R{room.price}</p>
               <Link to={`/book-room/${room.id}`}>Book Room</Link>
             </li>
           ))}
