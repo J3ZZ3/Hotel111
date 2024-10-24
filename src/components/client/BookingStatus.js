@@ -1,4 +1,3 @@
-// src/components/client/BookingStatus.js
 
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -28,7 +27,6 @@ const BookingStatus = () => {
       <p>Status: {booking.status}</p>
       {booking.status === "Paid" && <p>Your payment was successful!</p>}
       {booking.status === "Pending" && <p>Your booking is pending approval.</p>}
-      {/* Add more status messages as needed */}
     </div>
   );
 };

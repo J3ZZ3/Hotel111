@@ -30,7 +30,7 @@ const RoomCard = ({ room }) => {
             <p>Room Type: {room.roomType}</p>
               <p>Amenities: {room.amenities}</p>
               <p>Capacity: {room.capacity}</p>
-            <p>Price: R{room.price}</p>
+            <p>Price: ${room.price}</p>
             <button onClick={() => setIsEditing(true)}>Edit</button>
             <button onClick={handleDeleteRoom}>Delete</button>
           </div>

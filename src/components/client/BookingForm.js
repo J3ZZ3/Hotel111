@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom'; // To access passed room data
-import { PayPalButtons } from '@paypal/react-paypal-js'; // Example for PayPal
+import { useLocation } from 'react-router-dom';
+import { PayPalButtons } from '@paypal/react-paypal-js';
+import { Link } from "react-router-dom";
 
 const BookingForm = () => {
   const location = useLocation();
-  const { room } = location.state || {}; // Access room data passed from RoomList
+  const { room } = location.state || {};
   const [formData, setFormData] = useState({
     fullName: '',
     address: '',
@@ -23,11 +24,9 @@ const BookingForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you could also save the booking data in your database
     console.log('Booking details:', formData);
   };
 
-  // If no room data is available, show an error message
   if (!room) {
     return <p>No room data available.</p>;
   }
@@ -100,17 +99,15 @@ const BookingForm = () => {
             />
           </label>
         </div>
-        <button type="submit">Proceed to Payment</button>
+        
       </form>
 
-      {/* Payment processing (e.g., PayPal) */}
-      <h3>Payment</h3>
       <PayPalButtons
         createOrder={(data, actions) => {
           return actions.order.create({
             purchase_units: [{
               amount: {
-                value: room.price.toString(), // Use room price for payment
+                value: room.price.toString(), 
               },
             }],
           });
@@ -118,12 +115,16 @@ const BookingForm = () => {
         onApprove={async (data, actions) => {
           const details = await actions.order.capture();
           console.log('Transaction completed by ' + details.payer.name.given_name);
-          // Handle success, e.g., save booking details to Firestore
+          alert('Payment Successfull');
         }}
         onError={(err) => {
           console.error('Payment error:', err);
+          alert('Payment failed');
         }}
       />
+      <Link to="/client-dashboard">
+      <button type="submit">Complete Booking</button>
+      </Link>
     </div>
   );
 };

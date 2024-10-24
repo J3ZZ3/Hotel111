@@ -1,4 +1,3 @@
-// src/components/client/PayNow.js
 
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
@@ -9,26 +8,23 @@ const PayNow = () => {
   const { roomId } = useParams();
 
   useEffect(() => {
-    // Load the PayPal SDK
     const script = document.createElement("script");
-    script.src = "https://www.paypal.com/sdk/js?client-id=NY3U3CQ28MZQJ"; // Replace with your Sandbox Client ID
+    script.src = "https://www.paypal.com/sdk/js?client-id=AWUsGXF7f8N694qvZd2XgY2yPGdc874dAh72jR4ryPuX4c6BeINgx2ZdPIbCkpjxeE61Z1FPUPeWyGjA";
     script.async = true;
     script.onload = () => {
       window.paypal.Buttons({
         createOrder: async (data, actions) => {
-          // Call your server to set up the transaction
           const response = await fetch("/api/paypal/create-order", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ roomId }), // Send room ID for tracking
+            body: JSON.stringify({ roomId }),
           });
           const order = await response.json();
-          return order.id; // Return the order ID
+          return order.id;
         },
         onApprove: async (data, actions) => {
-          // Call your server to capture the transaction
           const response = await fetch("/api/paypal/capture-order", {
             method: "POST",
             headers: {
@@ -38,7 +34,6 @@ const PayNow = () => {
           });
           const details = await response.json();
           alert("Transaction completed by " + details.payer.name.given_name);
-          // Update booking status in Firestore
           await updateBookingStatus(roomId);
         },
         onError: (err) => {
@@ -51,7 +46,6 @@ const PayNow = () => {
   }, [roomId]);
 
   const updateBookingStatus = async (roomId) => {
-    // Update Firestore booking status to "Paid"
     await setDoc(doc(db, "bookings", roomId), {
       status: "Paid",
       paymentDate: new Date().toISOString(),

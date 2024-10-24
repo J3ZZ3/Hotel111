@@ -22,7 +22,7 @@ const ClientDashboard = () => {
   return (
     <div>
       <h1>Client Dashboard</h1>
-      <Link to="/payment-history">View Payment History</Link> {/* Link to Payment History */}
+      <Link to="/payment-history">View Payment History</Link> 
       <RoomList rooms={rooms} />
     </div>
   );

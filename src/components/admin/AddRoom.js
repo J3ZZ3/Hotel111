@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { db, storage } from "../../firebase/firebaseConfig"; // Import storage for file upload
+import { db, storage } from "../../firebase/firebaseConfig";
 import { collection, addDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // For handling image upload
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import Swal from "sweetalert2";
 
 const AddRoom = ({ setIsAdding }) => {
@@ -10,13 +10,12 @@ const AddRoom = ({ setIsAdding }) => {
   const [amenities, setAmenities] = useState("");
   const [price, setPrice] = useState("");
   const [roomType, setRoomType] = useState("");
-  const [imageFile, setImageFile] = useState(null); // To store the selected image file
+  const [imageFile, setImageFile] = useState(null);
   const [error, setError] = useState("");
 
   const handleAddRoom = async (e) => {
     e.preventDefault();
 
-    // Validation: Ensure all fields are filled
     if (!name || !description || !amenities || !price || !roomType || !imageFile) {
       setError("Please fill out all fields and upload an image.");
       Swal.fire({
@@ -28,31 +27,27 @@ const AddRoom = ({ setIsAdding }) => {
     }
 
     try {
-      // Upload image to Firebase Storage
       const imageRef = ref(storage, `rooms/${imageFile.name}`);
       await uploadBytes(imageRef, imageFile);
 
-      // Get the image URL from storage
       const imageUrl = await getDownloadURL(imageRef);
 
-      // Add room data to Firestore
       await addDoc(collection(db, "rooms"), {
         name,
         description,
         amenities,
-        price: parseFloat(price), // Ensure price is a number
+        price: parseFloat(price),
         roomType,
-        imageUrl, // Store the image URL
+        imageUrl,
       });
 
-      // Success alert and reset form
       Swal.fire({
         icon: "success",
         title: "Room Added",
         text: "The room has been added successfully.",
       });
 
-      setIsAdding(false); // Close the form
+      setIsAdding(false);
     } catch (err) {
       console.error("Error adding room: ", err);
       setError("Failed to add room. Please try again.");

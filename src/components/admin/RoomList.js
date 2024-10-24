@@ -12,10 +12,10 @@ const RoomList = ({ rooms }) => {
           {rooms.map((room) => (
             <li key={room.id}>
               <h3>{room.name}</h3>
+              <img src={room.imageUrl} alt={room.name} className="room-image" width={500} />
               <p>{room.description}</p>
               <p>Price: ${room.price}</p>
               <p>Status: {room.isBooked ? "Booked" : "Available"}</p>
-              {/* Show "Book Now" link only if the room is available */}
               {!room.isBooked && (
                 <Link to={`/book-room/${room.id}`} state={{ room }}>
                   <button>Book Now</button>
