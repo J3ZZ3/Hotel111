@@ -1,10 +1,16 @@
+// src/components/client/BookingForm.js
+
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { PayPalButtons } from '@paypal/react-paypal-js';
-import { Link } from "react-router-dom";
+import { db } from '../../firebase/firebaseConfig';
+import { collection, addDoc } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth'; 
+import Swal from 'sweetalert2';
 
 const BookingForm = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { room } = location.state || {};
   const [formData, setFormData] = useState({
     fullName: '',
@@ -13,6 +19,7 @@ const BookingForm = () => {
     checkInDate: '',
     checkOutDate: '',
   });
+  const [isPaid, setIsPaid] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,7 +31,58 @@ const BookingForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Booking details:', formData);
+    if (!isPaid) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Payment Required',
+        text: 'Please complete payment before submitting the booking.',
+      });
+      return;
+    }
+
+    try {
+      // Get the current logged-in user
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (!user) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Authentication Error',
+          text: 'You need to be logged in to book a room.',
+        });
+        return;
+      }
+
+      const bookingData = {
+        userId: user.uid,
+        roomId: room.id,
+        roomName: room.name,
+        ...formData,
+        status: 'Pending Approval',
+        paymentStatus: 'Paid', // Since they completed PayPal payment
+        createdAt: new Date(),
+      };
+
+      // Upload booking data to Firestore
+      await addDoc(collection(db, 'bookings'), bookingData);
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Booking Submitted',
+        text: 'Your booking has been submitted successfully and is awaiting approval.',
+      });
+
+      // Redirect to client dashboard or booking history
+      navigate('/client-dashboard');
+    } catch (err) {
+      console.error('Error submitting booking:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'There was a problem submitting your booking. Please try again.',
+      });
+    }
   };
 
   if (!room) {
@@ -99,32 +157,41 @@ const BookingForm = () => {
             />
           </label>
         </div>
-        
+        <div>
+          <PayPalButtons
+            createOrder={(data, actions) => {
+              return actions.order.create({
+                purchase_units: [{
+                  amount: {
+                    value: room.price.toString(), 
+                  },
+                }],
+              });
+            }}
+            onApprove={async (data, actions) => {
+              const details = await actions.order.capture();
+              console.log('Transaction completed by ' + details.payer.name.given_name);
+              setIsPaid(true);
+              Swal.fire({
+                icon: 'success',
+                title: 'Payment Successful',
+                text: 'Payment has been processed successfully.',
+              });
+            }}
+            onError={(err) => {
+              console.error('Payment error:', err);
+              Swal.fire({
+                icon: 'error',
+                title: 'Payment Failed',
+                text: 'There was an issue with the payment. Please try again.',
+              });
+            }}
+          />
+        </div>
+        <button type="submit" disabled={!isPaid}>
+          Submit and Proceed
+        </button>
       </form>
-
-      <PayPalButtons
-        createOrder={(data, actions) => {
-          return actions.order.create({
-            purchase_units: [{
-              amount: {
-                value: room.price.toString(), 
-              },
-            }],
-          });
-        }}
-        onApprove={async (data, actions) => {
-          const details = await actions.order.capture();
-          console.log('Transaction completed by ' + details.payer.name.given_name);
-          alert('Payment Successfull');
-        }}
-        onError={(err) => {
-          console.error('Payment error:', err);
-          alert('Payment failed');
-        }}
-      />
-      <Link to="/client-dashboard">
-      <button type="submit">Complete Booking</button>
-      </Link>
     </div>
   );
 };

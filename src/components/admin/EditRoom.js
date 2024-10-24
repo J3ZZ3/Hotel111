@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { doc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { db, storage } from "../../firebase/firebaseConfig"; // Import storage
+import { db, storage } from "../../firebase/firebaseConfig";
 
 const EditRoom = ({ room, setIsEditing }) => {
   const [name, setName] = useState(room.name);
@@ -9,34 +9,31 @@ const EditRoom = ({ room, setIsEditing }) => {
   const [amenities, setAmenities] = useState(room.amenities);
   const [price, setPrice] = useState(room.price);
   const [roomType, setRoomType] = useState(room.roomType);
-  const [image, setImage] = useState(null); // New state for image
+  const [image, setImage] = useState(null);
 
   const handleUpdateRoom = async (e) => {
     e.preventDefault();
     try {
-      let imageUrl = room.imageUrl; // Default to existing image URL
+      let imageUrl = room.imageUrl;
 
-      // If a new image is uploaded, update the image in Firebase Storage
       if (image) {
-        const imageRef = ref(storage, `rooms/${room.id}`); // Storage reference
+        const imageRef = ref(storage, `rooms/${room.id}`);
         await uploadBytes(imageRef, image);
-        imageUrl = await getDownloadURL(imageRef); // Get the new image URL
+        imageUrl = await getDownloadURL(imageRef);
       }
 
-      // Reference to the room document in Firestore
       const roomRef = doc(db, "rooms", room.id);
 
-      // Update room details in Firestore
       await updateDoc(roomRef, {
         name,
         description,
         amenities,
         price,
         roomType,
-        imageUrl, // Update imageUrl in Firestore
+        imageUrl,
       });
 
-      setIsEditing(false); // Close the form after updating
+      setIsEditing(false);
       alert("Room updated successfully.");
     } catch (error) {
       console.error("Error updating room: ", error);
@@ -77,7 +74,6 @@ const EditRoom = ({ room, setIsEditing }) => {
           <option value="Suite">Suite</option>
         </select>
 
-        {/* Upload new image */}
         <input type="file" onChange={(e) => setImage(e.target.files[0])} />
 
         <button type="submit">Update Room</button>

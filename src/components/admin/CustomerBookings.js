@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import AddRoom from "./AddRoom";
-import RoomList from "./AdminRoomList";
 import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
 
-const AdminDashboard = () => {
-  const [isAdding, setIsAdding] = useState(false);
-  const [rooms, setRooms] = useState([]);
+const CustomerBookings = () => {
   const [bookings, setBookings] = useState([]);
 
   // Fetch rooms from Firestore
@@ -18,7 +13,7 @@ const AdminDashboard = () => {
         id: doc.id,
         ...doc.data(),
       }));
-      setRooms(roomsData);
+
     };
 
     const fetchBookings = async () => {
@@ -48,23 +43,24 @@ const AdminDashboard = () => {
 
   return (
     <div>
-      <h1>Admin Dashboard</h1>
-      <button onClick={() => setIsAdding(true)}>Add Room</button>
-      <Link to="/add-admin">
-        <button>Add Admin</button>
-      </Link>
-      <Link to="/customer-bookings">
-        <button>Bookings</button>
-      </Link>
 
-      {isAdding && <AddRoom setIsAdding={setIsAdding} />}
-
-      <h2>Rooms</h2>
-      <RoomList rooms={rooms} />
-
-    
+      {bookings.map((booking) => (
+        <div key={booking.id}>
+          <p>User ID: {booking.userId}</p>
+          <p>User Name: {booking.fullName}</p>
+          <p>Room Name: {booking.roomName}</p>
+          <p>Contact Number: {booking.contactNumber}</p>
+          <p>Address: {booking.address}</p>
+          <p>Room ID: {booking.roomId}</p>
+        <p>Check In: {booking.checkInDate}</p>
+        <p>Check Out: {booking.checkOutDate}</p>
+          <p>Status: {booking.status}</p>
+          <button onClick={() => handleUpdateStatus(booking.id, "approved")}>Approve</button>
+          <button onClick={() => handleUpdateStatus(booking.id, "rejected")}>Reject</button>
+        </div>
+      ))}
     </div>
   );
 };
 
-export default AdminDashboard;
+export default CustomerBookings;
