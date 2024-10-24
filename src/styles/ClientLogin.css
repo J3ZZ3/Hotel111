@@ -1,0 +1,78 @@
+/* ClientLogin.css */
+.login-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-image: url('../components/assets/ClientLogin.jpg'); /* Full page background */
+    background-size: cover;
+    background-position: center;
+    color: white;
+    text-align: center;
+  }
+  
+  .login-page h1 {
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+  }
+  
+  .overlay {
+    display: flexbox;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.6); /* Dark overlay on the hero image */
+    color: white;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .login-page input {
+    display: flex;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    padding: 10px;
+    width: 300px;
+    border-radius: 5px;
+    border: none;
+    font-size: 1rem;
+  }
+  
+  .login-page button {
+    padding: 10px 20px;
+    background-color: #ff6b6b;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+  }
+  
+  .login-page button:hover {
+    background-color: #ff3d3d;
+  }
+  
+  /* SweetAlert2 Custom Popup */
+  .custom-popup {
+    border-radius: 15px;
+    backdrop-filter: blur(5px);
+  }
+  
+  .custom-popup .swal2-title {
+    color: #fff; /* White text color */
+  }
+  
+  .custom-popup .swal2-content {
+    color: #fff;
+  }
+  
+  .custom-popup .swal2-styled.swal2-confirm {
+    background-color: #ff6b6b;
+    border: none;
+    border-radius: 5px;
+  }
+  
+  .custom-popup .swal2-styled.swal2-confirm:hover {
+    background-color: #ff3d3d;
+  }
