@@ -1,10 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
 const RoomList = ({ rooms }) => {
   return (
-    <div>
-      <h2>Available Rooms</h2>
+    <div className="room-list">
       {rooms.length === 0 ? (
         <p>No rooms available</p>
       ) : (
@@ -12,9 +10,11 @@ const RoomList = ({ rooms }) => {
           {rooms.map((room) => (
             <li key={room.id}>
               <h3>{room.name}</h3>
-              <img src={room.imageUrl} alt={room.name} className="room-image" width={500} />
               <p>{room.description}</p>
-              <p>Price: ${room.price}</p>
+ 
+<p>Amenities: {room.amenities}</p>
+<p>Rating: {room.averageRating}</p>
+<p>Price: ${room.price}</p>
               <p>Status: {room.isBooked ? "Booked" : "Available"}</p>
               {!room.isBooked && (
                 <Link to={`/book-room/${room.id}`} state={{ room }}>

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
-
+import "./AdminStyles/CustomerBookings.css";
 const CustomerBookings = () => {
   const [bookings, setBookings] = useState([]);
 
-  // Fetch rooms from Firestore
   useEffect(() => {
     const fetchRooms = async () => {
       const querySnapshot = await getDocs(collection(db, "rooms"));
@@ -13,7 +12,6 @@ const CustomerBookings = () => {
         id: doc.id,
         ...doc.data(),
       }));
-
     };
 
     const fetchBookings = async () => {
@@ -33,7 +31,6 @@ const CustomerBookings = () => {
     const bookingRef = doc(db, "bookings", bookingId);
     await updateDoc(bookingRef, { status: newStatus });
     alert(`Booking has been ${newStatus}`);
-    // Optionally refresh the bookings list or update the state
     setBookings((prev) =>
       prev.map((booking) =>
         booking.id === bookingId ? { ...booking, status: newStatus } : booking
@@ -42,23 +39,38 @@ const CustomerBookings = () => {
   };
 
   return (
-    <div>
-
-      {bookings.map((booking) => (
-        <div key={booking.id}>
-          <p>User ID: {booking.userId}</p>
-          <p>User Name: {booking.fullName}</p>
-          <p>Room Name: {booking.roomName}</p>
-          <p>Contact Number: {booking.contactNumber}</p>
-          <p>Address: {booking.address}</p>
-          <p>Room ID: {booking.roomId}</p>
-        <p>Check In: {booking.checkInDate}</p>
-        <p>Check Out: {booking.checkOutDate}</p>
-          <p>Status: {booking.status}</p>
-          <button onClick={() => handleUpdateStatus(booking.id, "approved")}>Approve</button>
-          <button onClick={() => handleUpdateStatus(booking.id, "rejected")}>Reject</button>
-        </div>
-      ))}
+    <div className="customer-bookings-cb">
+      <div className="overlay-cb">
+        <h1>Customer Bookings</h1>
+        {bookings.map((booking) => (
+          <div className="booking-card-cb" key={booking.id}>
+            <p>User ID: {booking.userId}</p>
+            <p>User Name: {booking.fullName}</p>
+            <p>Room Name: {booking.roomName}</p>
+            <p>Contact Number: {booking.contactNumber}</p>
+            <p>Address: {booking.address}</p>
+            <p>Room ID: {booking.roomId}</p>
+            <p>Check In: {booking.checkInDate}</p>
+            <p>Check Out: {booking.checkOutDate}</p>
+            <p>Status: {booking.status}</p>
+            <p>Payment Status: {booking.paymentStatus}</p>
+            <div className="status-buttons-cb">
+              <button
+                className="approve-cb"
+                onClick={() => handleUpdateStatus(booking.id, "approved")}
+              >
+                Approve
+              </button>
+              <button
+                className="reject-cb"
+                onClick={() => handleUpdateStatus(booking.id, "rejected")}
+              >
+                Reject
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

@@ -1,4 +1,3 @@
-// src/components/client/BookingForm.js
 
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -41,7 +40,6 @@ const BookingForm = () => {
     }
 
     try {
-      // Get the current logged-in user
       const auth = getAuth();
       const user = auth.currentUser;
 
@@ -60,11 +58,10 @@ const BookingForm = () => {
         roomName: room.name,
         ...formData,
         status: 'Pending Approval',
-        paymentStatus: 'Paid', // Since they completed PayPal payment
+        paymentStatus: 'Paid',
         createdAt: new Date(),
       };
 
-      // Upload booking data to Firestore
       await addDoc(collection(db, 'bookings'), bookingData);
 
       Swal.fire({
@@ -73,7 +70,6 @@ const BookingForm = () => {
         text: 'Your booking has been submitted successfully and is awaiting approval.',
       });
 
-      // Redirect to client dashboard or booking history
       navigate('/client-dashboard');
     } catch (err) {
       console.error('Error submitting booking:', err);

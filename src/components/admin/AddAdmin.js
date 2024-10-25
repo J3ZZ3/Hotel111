@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../../firebase/firebaseConfig";
 import { collection, addDoc } from "firebase/firestore";
+import "./AdminStyles/AddAdmin.css";
+import AdminNavbar from "./AdminNavbar";
 
 const AddAdmin = () => {
   const [email, setEmail] = useState("");
@@ -15,7 +17,6 @@ const AddAdmin = () => {
       
       const user = userCredential.user;
 
-      // Add the new admin to Firestore
       await addDoc(collection(db, "admins"), {
         uid: user.uid,
         email: user.email,
@@ -31,8 +32,12 @@ const AddAdmin = () => {
 
   return (
     <div>
+    <AdminNavbar />
+    <div className="add-admin">
+   
+      <div className="overlay-aa">
+      <form className="form-aa"onSubmit={handleAddAdmin}>
       <h1>Add New Admin</h1>
-      <form onSubmit={handleAddAdmin}>
         <input
           type="email"
           placeholder="Admin Email"
@@ -45,9 +50,11 @@ const AddAdmin = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button type="submit">Add Admin</button>
+        <button className="btn" type="submit">Add Admin</button>
         {error && <p>{error}</p>}
       </form>
+    </div>
+    </div>
     </div>
   );
 };

@@ -3,7 +3,8 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase/firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../firebase/firebaseConfig"; // Firestore import
+import { db } from "../../firebase/firebaseConfig";
+import "./AdminStyles/AdminLogin.css";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
@@ -15,19 +16,15 @@ const AdminLogin = () => {
     e.preventDefault();
 
     try {
-      // Step 1: Sign in the user with Firebase Authentication
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       
-      // Step 2: Check if the user is an admin by fetching their document from Firestore
       const user = userCredential.user;
-      const docRef = doc(db, "admins", user.uid); // Reference to the Firestore admin document
+      const docRef = doc(db, "admins", user.uid);
       const docSnap = await getDoc(docRef);
       
       if (docSnap.exists()) {
-        // Step 3: Check if user has isAdmin set to true
         const userData = docSnap.data();
         if (userData.isAdmin) {
-          // Proceed to the admin dashboard if the user is an admin
           navigate("/admin-dashboard");
         } else {
           setError("Access denied. You are not an admin.");
@@ -41,7 +38,9 @@ const AdminLogin = () => {
   };
 
   return (
-    <div>
+   
+    <div className="admin-login">
+       <div className="overlay">
       <h1>Admin Login</h1>
       <form onSubmit={handleLogin}>
         <input
@@ -49,17 +48,20 @@ const AdminLogin = () => {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
         <button type="submit">Login</button>
         {error && <p>{error}</p>}
       </form>
-      <p>Don't have an account? <a href="/admin-register">Register</a></p>
+      <p className="register">Don't have an account? <a href="/admin-register">Register</a></p>
+    </div>
     </div>
   );
 };

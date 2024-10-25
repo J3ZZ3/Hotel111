@@ -1,7 +1,7 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for routing
-import '../styles/HomePage.css'; // Import external CSS for styling
-import luxuryImg from './assets/luxury-room.jpg'; // Import image from assets
+import { useNavigate } from 'react-router-dom';
+import './HomePage.css';
+import luxuryImg from './assets/luxury-room.jpg';
 import spaImg from './assets/spa.jpg';
 import diningImg from './assets/dining.jpg';
 
@@ -9,7 +9,7 @@ const HomePage = () => {
   const navigate = useNavigate();
 
   const handleGetStarted = () => {
-    navigate('/client-login'); // Redirect to login page
+    navigate('/client-login');
   };
 
   return (

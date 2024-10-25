@@ -4,13 +4,13 @@ import AddRoom from "./AddRoom";
 import RoomList from "./AdminRoomList";
 import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
+import "./AdminStyles/AdminDashboard.css";
 
 const AdminDashboard = () => {
   const [isAdding, setIsAdding] = useState(false);
   const [rooms, setRooms] = useState([]);
   const [bookings, setBookings] = useState([]);
 
-  // Fetch rooms from Firestore
   useEffect(() => {
     const fetchRooms = async () => {
       const querySnapshot = await getDocs(collection(db, "rooms"));
@@ -38,7 +38,6 @@ const AdminDashboard = () => {
     const bookingRef = doc(db, "bookings", bookingId);
     await updateDoc(bookingRef, { status: newStatus });
     alert(`Booking has been ${newStatus}`);
-    // Optionally refresh the bookings list or update the state
     setBookings((prev) =>
       prev.map((booking) =>
         booking.id === bookingId ? { ...booking, status: newStatus } : booking
@@ -47,22 +46,26 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div>
+    <div className="admin-dashboard-ad">
+      <div className="overlay-ad">
       <h1>Admin Dashboard</h1>
-      <button onClick={() => setIsAdding(true)}>Add Room</button>
+      <div className="buttons-ad">
+      <button  onClick={() => setIsAdding(true)}>Add Room</button>
       <Link to="/add-admin">
-        <button>Add Admin</button>
+        <button >Add Admin</button>
       </Link>
       <Link to="/customer-bookings">
-        <button>Bookings</button>
+        <button >Bookings</button>
       </Link>
+      </div>
 
       {isAdding && <AddRoom setIsAdding={setIsAdding} />}
-
+<div className="rooms-ad">
       <h2>Rooms</h2>
       <RoomList rooms={rooms} />
 
-    
+    </div>
+    </div>
     </div>
   );
 };

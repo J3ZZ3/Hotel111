@@ -1,11 +1,11 @@
-// src/components/client/ClientDashboard.js
 
 import React, { useState, useEffect } from "react";
 import { db } from "../../firebase/firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
-import RoomList from "../admin/RoomList"; // Reusing the admin RoomList component
-import { Link } from "react-router-dom"; // Import Link for navigation
-import "./ClientDashboard.css"; // Optional: Import CSS for styling
+import RoomList from "../admin/RoomList";
+import { Link } from "react-router-dom";
+import "./ClientStyles/ClientDashboard.css";
+import Navbar from "./ClientNavbar";
 
 const ClientDashboard = () => {
   const [rooms, setRooms] = useState([]);
@@ -28,13 +28,18 @@ const ClientDashboard = () => {
   }, []);
 
   return (
-    <div className="client-dashboard">
+    
+     
+    
+
+
+    <div className="client-dashboard-cd">
+    <Navbar />
+      <div className="overlay-cd">
       <h1>Client Dashboard</h1>
-      <div className="dashboard-header">
-        <Link to="/booking-history" className="view-history-button">View Booking History</Link>
-        <Link to="/booking-status/:roomId" className="view-user-bookings">My Bookings</Link>
-      </div>
-      <RoomList rooms={rooms} />
+
+      <RoomList className="room-list-cd" rooms={rooms} />
+    </div>
     </div>
   );
 };

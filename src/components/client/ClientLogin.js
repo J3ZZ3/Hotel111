@@ -4,7 +4,7 @@ import { auth } from "../../firebase/firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from 'sweetalert2-react-content';
-import '../../styles/ClientLogin.css';
+import './ClientStyles/ClientLogin.css';
 
 
 const ClientLogin = () => {
@@ -55,6 +55,7 @@ const ClientLogin = () => {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
         <input
         className="login-password"
@@ -62,6 +63,7 @@ const ClientLogin = () => {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
         <button className="login-button" type="submit">Login</button>
         {error && <p>{error}</p>}

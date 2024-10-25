@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { db, storage } from "../../firebase/firebaseConfig"; // Import storage for file upload
+import { db, storage } from "../../firebase/firebaseConfig";
 import { collection, addDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // For handling image upload
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import Swal from "sweetalert2";
+import "./AdminStyles/AddRoom.css";
 
 const AddRoom = ({ setIsAdding }) => {
   const [name, setName] = useState("");
@@ -10,53 +11,44 @@ const AddRoom = ({ setIsAdding }) => {
   const [amenities, setAmenities] = useState("");
   const [price, setPrice] = useState("");
   const [roomType, setRoomType] = useState("");
-  const [imageFiles, setImageFiles] = useState([]); // To store selected image files
+  const [imageFile, setImageFile] = useState(null);
   const [error, setError] = useState("");
 
   const handleAddRoom = async (e) => {
     e.preventDefault();
 
-    // Validation: Ensure all fields are filled
-    if (!name || !description || !amenities || !price || !roomType || imageFiles.length === 0) {
-      setError("Please fill out all fields and upload at least one image.");
+    if (!name || !description || !amenities || !price || !roomType || !imageFile) {
+      setError("Please fill out all fields and upload an image.");
       Swal.fire({
         icon: "error",
         title: "Error",
-        text: "All fields are required, and at least one image must be uploaded.",
+        text: "All fields are required, and an image must be uploaded.",
       });
       return;
     }
 
     try {
-      const imageUrls = []; // Array to store URLs of uploaded images
+      const imageRef = ref(storage, `rooms/${imageFile.name}`);
+      await uploadBytes(imageRef, imageFile);
+      const imageUrl = await getDownloadURL(imageRef);
 
-      // Upload each image to Firebase Storage
-      for (const file of imageFiles) {
-        const imageRef = ref(storage, `rooms/${file.name}`);
-        await uploadBytes(imageRef, file);
-        const imageUrl = await getDownloadURL(imageRef);
-        imageUrls.push(imageUrl); // Add URL to array
-      }
-
-      // Add room data to Firestore
       await addDoc(collection(db, "rooms"), {
         name,
         description,
         amenities,
-        price: parseFloat(price), // Ensure price is a number
+        price: parseFloat(price),
         roomType,
-        images: imageUrls, // Store the array of image URLs
+        image: imageUrl,
       });
 
-      // Success alert and reset form
       Swal.fire({
         icon: "success",
         title: "Room Added",
         text: "The room has been added successfully.",
       });
 
-      setIsAdding(false); // Close the form
-      resetForm(); // Reset form fields
+      setIsAdding(false);
+      resetForm();
     } catch (err) {
       console.error("Error adding room: ", err);
       setError("Failed to add room. Please try again.");
@@ -69,13 +61,12 @@ const AddRoom = ({ setIsAdding }) => {
     setAmenities("");
     setPrice("");
     setRoomType("");
-    setImageFiles([]); // Clear image files
-    setError(""); // Clear error
+    setImageFile(null);
+    setError("");
   };
 
   return (
     <div className="add-room-container">
-      <h2>Add a New Room</h2>
       <form onSubmit={handleAddRoom}>
         <input
           type="text"
@@ -109,8 +100,7 @@ const AddRoom = ({ setIsAdding }) => {
         <input
           type="file"
           accept="image/*"
-          multiple // Allow multiple file selection
-          onChange={(e) => setImageFiles(Array.from(e.target.files))} 
+          onChange={(e) => setImageFile(e.target.files[0])}
         />
         <button type="submit">Add Room</button>
         {error && <p className="error">{error}</p>}
